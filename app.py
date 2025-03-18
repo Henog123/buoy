@@ -26,7 +26,7 @@ with app.app_context():
 # Homepage - Basic Welcome Message
 @app.route("/")
 def home():
-    return "Welcome to the GPS Tracker API! Use /update_location to send data and /history to view past locations."
+    return render_template("index.html")
 
 # API Endpoint to Update GPS Location
 @app.route("/update_location", methods=["POST"])
