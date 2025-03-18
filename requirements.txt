@@ -1,4 +1,5 @@
 flask
+Flask-Migrate
 gunicorn
 flask-sqlalchemy
 psycopg2
