@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GPS Location History</title>
+</head>
+<body>
+    <h1>Past GPS Locations</h1>
+    <table border="1">
+        <tr>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for loc in locations %}
+        <tr>
+            <td>{{ loc.lat }}</td>
+            <td>{{ loc.lon }}</td>
+            <td>{{ loc.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
