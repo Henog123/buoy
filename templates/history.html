@@ -3,10 +3,7 @@
 <head>
     <title>GPS Location History</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+        
         h1 {
             color: #333;
         }
@@ -31,11 +28,52 @@
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #header {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        #nav {
+            margin-top: 10px;
+        }
+        #nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: white;
+        }
+        #nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            margin: 20px;
+        }
     </style>
     <!-- Add Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
+    <div id="header">
+        <h1>GPS Tracker Dashboard</h1>
+        <div id="nav">
+            <a href="/">Home</a>
+            <a href="/history">View History</a>
+            <a href="/update_location">Update Location</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Welcome to the GPS Tracker API!</h2>
+        <p>Use <a href="/update_location">/update_location</a> to send GPS data.</p>
+        <p>View past GPS locations <a href="/history">here</a>.</p>
+    </div>
+
+    
     <h1>GPS Location History</h1>
 
     <!-- Map Container -->
