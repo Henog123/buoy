@@ -14,12 +14,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 
-def run_migrations():
-    try:
-        upgrade()
-        print("✅ Migrations applied successfully!")
-    except Exception as e:
-        print(f"⚠️ Error applying migrations: {e}")
 
 # Define the GPSData model
 class GPSData(db.Model):
@@ -76,3 +70,12 @@ def history():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+
+def run_migrations():
+    try:
+        upgrade()
+        print("✅ Migrations applied successfully!")
+    except Exception as e:
+        print(f"⚠️ Error applying migrations: {e}")
+
+
