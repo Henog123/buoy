@@ -49,10 +49,10 @@ def update_location():
 
     # Create a new GPSData record with additional data
     new_location = GPSData(
-        lat=data["lat"],
-        lon=data["lon"],
-        wind_speed=wind_speed,
-        water_temp=water_temp,
+    lat=data["lat"],
+    lon=data["lon"],
+    wind_speed=data.get("wind_speed", 0.0),
+    water_temp=data.get("water_temp", 0.0)
     )
     db.session.add(new_location)
     db.session.commit()
