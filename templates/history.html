@@ -79,23 +79,24 @@
     <div id="map"></div>
     
         <h2>Location Data</h2>
-        <table>
-            <tr>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Timestamp</th>
-            </tr>
-            {% for loc in locations %}
-            <tr>
-                <td>{{ loc.lat }}</td>
-                <td>{{ loc.lon }}</td>
-                <td>{{ loc.timestamp }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-   
-        
-    
+    <table>
+        <tr>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Wind Speed (m/s)</th>
+            <th>Water Temperature (°C)</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for loc in locations %}
+        <tr>
+            <td>{{ loc.lat }}</td>
+            <td>{{ loc.lon }}</td>
+            <td>{{ loc.wind_speed }}</td>
+            <td>{{ loc.water_temp }}</td>
+            <td>{{ loc.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 
     <!-- Add Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -111,20 +112,33 @@
         // Add markers for each location
         var locations = [
             {% for loc in locations %}
-                [{{ loc.lat }}, {{ loc.lon }}],
+                {
+                    lat: {{ loc.lat }},
+                    lon: {{ loc.lon }},
+                    wind_speed: {{ loc.wind_speed }},
+                    water_temp: {{ loc.water_temp }},
+                    timestamp: "{{ loc.timestamp }}"
+                },
             {% endfor %}
         ];
 
-        // Add markers to the map
+        // Add markers to the map with extra info
         locations.forEach(function (location) {
-            L.marker(location).addTo(map);
+            var popupContent = `
+                <strong>Coordinates:</strong> ${location.lat}, ${location.lon}<br>
+                <strong>Wind Speed:</strong> ${location.wind_speed} m/s<br>
+                <strong>Water Temp:</strong> ${location.water_temp} °C<br>
+                <strong>Timestamp:</strong> ${location.timestamp}
+            `;
+            L.marker([location.lat, location.lon])
+                .addTo(map)
+                .bindPopup(popupContent);
         });
 
         // Center the map to the last location if available
         if (locations.length > 0) {
             var lastLocation = locations[0];
-            map.setView(lastLocation, 12);
+            map.setView([lastLocation.lat, lastLocation.lon], 12);
         }
     </script>
-</body>
 </html>
