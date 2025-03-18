@@ -120,8 +120,14 @@
                     timestamp: "{{ loc.timestamp }}"
                 },
             {% endfor %}
-        ];
+    
 
+        // Add markers to the map
+        locations.forEach(function (location) {
+            L.marker(location).addTo(map);
+        });
+
+       
         // Add markers to the map with extra info
         locations.forEach(function (location) {
             var popupContent = `
