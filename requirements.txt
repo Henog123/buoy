@@ -3,4 +3,4 @@ Flask-Migrate
 gunicorn
 flask-sqlalchemy
 psycopg2
-flask db upgrade
+
