@@ -17,6 +17,8 @@ class GPSData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lat = db.Column(db.Float, nullable=False)
     lon = db.Column(db.Float, nullable=False)
+    wind_speed = db.Column(db.Float, nullable=True)
+    water_temp = db.Column(db.Float, nullable=True)
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
 
 # Create the database tables
