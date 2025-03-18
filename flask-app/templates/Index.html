@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live GPS Tracker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map { height: 500px; width: 100%; }
+    </style>
+</head>
+<body>
+    <h2>Probe Live GPS Tracker</h2>
+    <div id="map"></div>
+    
+    <script>
+        let map = L.map('map').setView([0, 0], 2);  // Default center
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker = L.marker([0, 0]).addTo(map);
+
+        async function updateLocation() {
+            let response = await fetch("/location");
+            let data = await response.json();
+            let { lat, lon } = data;
+
+            marker.setLatLng([lat, lon]);
+            map.setView([lat, lon], 10);
+        }
+
+        setInterval(updateLocation, 5000);  // Update every 5 seconds
+    </script>
+</body>
+</html>
