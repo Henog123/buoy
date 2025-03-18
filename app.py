@@ -35,7 +35,6 @@ def home():
 
 # API Endpoint to Update GPS Location
 @app.route("/update_location", methods=["POST"])
-@app.route("/update_location", methods=["POST"])
 def update_location():
     data = request.get_json()
     
@@ -58,6 +57,22 @@ def update_location():
     db.session.commit()
 
     return jsonify({"message": "Location and data saved successfully!"}), 200
+    
+@app.route("/delete_locations_by_timestamp", methods=["DELETE"])
+def delete_locations_by_timestamp():
+    timestamp = request.args.get('timestamp')  # Get the timestamp parameter
+
+    # Delete records with that timestamp
+    gps_data = db.session.query(GpsData).filter(GpsData.timestamp == timestamp).all()
+
+    if gps_data:
+        for data in gps_data:
+            db.session.delete(data)
+        db.session.commit()
+        return jsonify({"message": "Locations deleted successfully"})
+    else:
+        return jsonify({"message": "No matching locations found"}), 404
+
 
 # Page to View GPS Location History
 @app.route("/history")
