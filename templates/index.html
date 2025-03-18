@@ -8,9 +8,48 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
         #map { height: 500px; width: 100%; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #header {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        #nav {
+            margin-top: 10px;
+        }
+        #nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: white;
+        }
+        #nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            margin: 20px;
+        }
     </style>
 </head>
 <body>
+    <div id="header">
+        <h1>GPS Tracker Dashboard</h1>
+        <div id="nav">
+            <a href="/">Home</a>
+            <a href="/history">View History</a>
+            <a href="/update_location">Update Location</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Welcome to the GPS Tracker API!</h2>
+        <p>Use <a href="/update_location">/update_location</a> to send GPS data.</p>
+        <p>View past GPS locations <a href="/history">here</a>.</p>
+    </div>
     <h2>Probe Live GPS Tracker</h2>
     <div id="map"></div>
     
