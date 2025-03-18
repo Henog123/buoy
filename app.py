@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import upgrade
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -11,6 +12,14 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
+
+
+def run_migrations():
+    try:
+        upgrade()
+        print("✅ Migrations applied successfully!")
+    except Exception as e:
+        print(f"⚠️ Error applying migrations: {e}")
 
 # Define the GPSData model
 class GPSData(db.Model):
