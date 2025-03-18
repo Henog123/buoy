@@ -118,16 +118,12 @@
                     wind_speed: {{ loc.wind_speed }},
                     water_temp: {{ loc.water_temp }},
                     timestamp: "{{ loc.timestamp }}"
-                },
+                }
+                {% if not loop.last %},{% endif %}
             {% endfor %}
-    
+        ];
 
-        // Add markers to the map
-        locations.forEach(function (location) {
-            L.marker(location).addTo(map);
-        });
-
-       
+        
         // Add markers to the map with extra info
         locations.forEach(function (location) {
             var popupContent = `
