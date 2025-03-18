@@ -63,7 +63,7 @@ def delete_locations_by_timestamp():
     timestamp = request.args.get('timestamp')  # Get the timestamp parameter
 
     # Delete records with that timestamp
-    gps_data = db.session.query(GpsData).filter(GpsData.timestamp == timestamp).all()
+    gps_data = db.session.query(GPSData).filter(GPSData.timestamp == timestamp).all()
 
     if gps_data:
         for data in gps_data:
