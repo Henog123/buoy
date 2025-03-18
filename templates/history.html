@@ -10,7 +10,7 @@
         #map {
             height: 400px;
             width: 80%;
-            margin: 20px;
+            align: center;
         }
         table {
             width: 80%;
@@ -53,16 +53,22 @@
         .container {
             margin: 20px;
         }
+        #tablebd {
+            align: center;
+        }
     </style>
     <!-- Add Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
 
-    <div class="container">
-        <h2>Welcome to the GPS Tracker API!</h2>
-        <p>Use <a href="/update_location">/update_location</a> to send GPS data.</p>
-        <p>View past GPS locations <a href="/history">here</a>.</p>
+    <div id="header">
+        <h1>GPS Tracker Dashboard</h1>
+        <div id="nav">
+            <a href="/">Home</a>
+            <a href="/history">View History</a>
+            <a href="/update_location">Update Location</a>
+        </div>
     </div>
 
     
@@ -70,22 +76,25 @@
 
     <!-- Map Container -->
     <div id="map"></div>
-
-    <h2>Location Data</h2>
-    <table>
-        <tr>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Timestamp</th>
-        </tr>
-        {% for loc in locations %}
-        <tr>
-            <td>{{ loc.lat }}</td>
-            <td>{{ loc.lon }}</td>
-            <td>{{ loc.timestamp }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div id="tabledb">
+        <h2>Location Data</h2>
+        <table>
+            <tr>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Timestamp</th>
+            </tr>
+            {% for loc in locations %}
+            <tr>
+                <td>{{ loc.lat }}</td>
+                <td>{{ loc.lon }}</td>
+                <td>{{ loc.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+        
+    
 
     <!-- Add Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
