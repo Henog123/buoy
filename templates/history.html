@@ -2,10 +2,47 @@
 <html>
 <head>
     <title>GPS Location History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #map {
+            height: 400px;
+            width: 80%;
+            margin-top: 20px;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+    <!-- Add Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-    <h1>Past GPS Locations</h1>
-    <table border="1">
+    <h1>GPS Location History</h1>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <h2>Location Data</h2>
+    <table>
         <tr>
             <th>Latitude</th>
             <th>Longitude</th>
@@ -19,5 +56,35 @@
         </tr>
         {% endfor %}
     </table>
+
+    <!-- Add Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([0, 0], 2);  // Default to world view
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Add markers for each location
+        var locations = [
+            {% for loc in locations %}
+                [{{ loc.lat }}, {{ loc.lon }}],
+            {% endfor %}
+        ];
+
+        // Add markers to the map
+        locations.forEach(function (location) {
+            L.marker(location).addTo(map);
+        });
+
+        // Center the map to the last location if available
+        if (locations.length > 0) {
+            var lastLocation = locations[0];
+            map.setView(lastLocation, 12);
+        }
+    </script>
 </body>
 </html>
