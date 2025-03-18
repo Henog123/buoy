@@ -32,6 +32,7 @@ def home():
 
 # API Endpoint to Update GPS Location
 @app.route("/update_location", methods=["POST"])
+@app.route("/update_location", methods=["POST"])
 def update_location():
     data = request.get_json()
     
@@ -39,12 +40,21 @@ def update_location():
     if not data or "lat" not in data or "lon" not in data:
         return jsonify({"error": "Invalid data. Please provide 'lat' and 'lon'"}), 400
 
-    # Create a new GPSData record
-    new_location = GPSData(lat=data["lat"], lon=data["lon"])
+    # Get additional fields with defaults
+    wind_speed = data.get("wind_speed", 0.0)
+    water_temp = data.get("water_temp", 0.0)
+
+    # Create a new GPSData record with additional data
+    new_location = GPSData(
+        lat=data["lat"],
+        lon=data["lon"],
+        wind_speed=wind_speed,
+        water_temp=water_temp,
+    )
     db.session.add(new_location)
     db.session.commit()
 
-    return jsonify({"message": "Location saved successfully!"}), 200
+    return jsonify({"message": "Location and data saved successfully!"}), 200
 
 # Page to View GPS Location History
 @app.route("/history")
