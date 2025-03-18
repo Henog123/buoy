@@ -18,6 +18,7 @@ db = SQLAlchemy(app)
 # Define the GPSData model
 class GPSData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    tracker_id = db.Column(db.String, nullable=False)
     lat = db.Column(db.Float, nullable=False)
     lon = db.Column(db.Float, nullable=False)
     wind_speed = db.Column(db.Float, nullable=True)
@@ -51,7 +52,8 @@ def update_location():
     lat=data["lat"],
     lon=data["lon"],
     wind_speed=data.get("wind_speed", 0.0),
-    water_temp=data.get("water_temp", 0.0)
+    water_temp=data.get("water_temp", 0.0),
+    tracker_id=data["tracker_id"]
     )
     db.session.add(new_location)
     db.session.commit()
