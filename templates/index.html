@@ -54,7 +54,25 @@
     </div>
     <h2>Live location</h2>
     <div id="map"></div>
-
+     <h2>Location Data</h2>
+    <table>
+        <tr>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Wind Speed (m/s)</th>
+            <th>Water Temperature (°C)</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for loc in locations %}
+        <tr>
+            <td>{{ loc.lat }}</td>
+            <td>{{ loc.lon }}</td>
+            <td>{{ loc.wind_speed }}</td>
+            <td>{{ loc.water_temp }}</td>
+            <td>{{ loc.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
     <script>
         // Create the map and set initial view
     var map = L.map('map').setView([0, 0], 2);
