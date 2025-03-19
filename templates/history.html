@@ -157,12 +157,7 @@ if (latlngs.length > 1) {
     map.fitBounds(polyline.getBounds());
 }
 
-    var polyline = L.polyline(latlngs, {
-    color: 'blue',          // Change line color
-    weight: 5,             // Make the line thicker
-    opacity: 0.9,          // Make the line more visible
-    dashArray: '5, 10'     // Make the line dashed
-}).addTo(map);
+
         
 // Center the map to the last location if available
 if (locations.length > 0) {
