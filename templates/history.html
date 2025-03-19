@@ -68,13 +68,13 @@
         <h1>GPS Tracker Dashboard</h1>
         <div id="nav">
             <a href="/">Home</a>
-            <a href="/history">View History</a>
+            <a href="/history/1">View History</a>
             <a href="/update_location">Update Location</a>
         </div>
     </div>
 
     
-    <h2>GPS Location History</h2>
+    <h2>Tracker History - ID: {{ tracker_data[0].tracker_id }}</h2>
 
     <!-- Map Container -->
     <div id="map"></div>
@@ -82,19 +82,21 @@
         <h2>Location Data</h2>
     <table>
         <tr>
+            <th>Tracker</th>
             <th>Latitude</th>
             <th>Longitude</th>
             <th>Wind Speed (m/s)</th>
             <th>Water Temperature (°C)</th>
             <th>Timestamp</th>
         </tr>
-        {% for loc in locations %}
+        {% for data in tracker_data %}
         <tr>
-            <td>{{ loc.lat }}</td>
-            <td>{{ loc.lon }}</td>
-            <td>{{ loc.wind_speed }}</td>
-            <td>{{ loc.water_temp }}</td>
-            <td>{{ loc.timestamp }}</td>
+            <td>{{ data.tracker_id }}</td>
+            <td>{{ data.lat }}</td>
+            <td>{{ data.lon }}</td>
+            <td>{{ data.wind_speed }}</td>
+            <td>{{ data.water_temp }}</td>
+            <td>{{ data.timestamp }}</td>
         </tr>
         {% endfor %}
     </table>
@@ -112,21 +114,22 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Add markers for each location
 var locations = [
-    {% for loc in locations %}
+    {% for data in tracker_data %}
         {
-            lat: {{ loc.lat }},
-            lon: {{ loc.lon }},
-            wind_speed: {{ loc.wind_speed }},
-            water_temp: {{ loc.water_temp }},
-            timestamp: "{{ loc.timestamp }}"
+            tracker_id: "{{ data.tracker_id }}",
+            lat: {{ data.lat }},
+            lon: {{ data.lon }},
+            wind_speed: {{ data.wind_speed }},
+            water_temp: {{ data.water_temp }},
+            timestamp: "{{ data.timestamp }}"
         }
         {% if not loop.last %},{% endif %}
     {% endfor %}
 ];
 
-// Add markers with extra information (popup)
 locations.forEach(function (location) {
     var popupContent = `
+        <strong>Tracker:</strong> ${location.tracker_id}<br>
         <strong>Coordinates:</strong> ${location.lat}, ${location.lon}<br>
         <strong>Wind Speed:</strong> ${location.wind_speed} m/s<br>
         <strong>Water Temp:</strong> ${location.water_temp} °C<br>
@@ -137,11 +140,33 @@ locations.forEach(function (location) {
         .bindPopup(popupContent);
 });
 
+// Create an array of LatLng points from locations
+var latlngs = locations.map(function (location) {
+    return [location.lat, location.lon];
+});
+
+// Draw a polyline connecting the points
+if (latlngs.length > 1) {
+    var polyline = L.polyline(latlngs, {
+        color: 'blue',     // Line color
+        weight: 3,         // Line thickness
+        opacity: 0.8,      // Line opacity
+    }).addTo(map);
+
+    // Fit the map to show the polyline
+    map.fitBounds(polyline.getBounds());
+}
+
+
+        
 // Center the map to the last location if available
 if (locations.length > 0) {
-    var lastLocation = locations[locations.length - 1];
-    map.setView([lastLocation.lat, lastLocation.lon], 12);
+    var bounds = locations.map(function (location) {
+        return [location.lat, location.lon];
+    });
+    map.fitBounds(bounds);
 }
+        
 console.log(locations);
 
     </script>
