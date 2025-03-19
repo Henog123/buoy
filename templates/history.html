@@ -130,7 +130,6 @@
 <!-- Correct Date Adapter -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0"></script>
 
-<script> Chart.register(Chart.adapters.dateFns);</script>
 
 
 
@@ -172,9 +171,6 @@ locations.forEach(function (location) {
         .addTo(map)
         .bindPopup(popupContent);
 });
-        // Register the date adapter
-import { Chart } from 'chart.js';
-import 'chartjs-adapter-date-fns';
 
 // Explicitly register the adapter
 Chart.register(require('chartjs-adapter-date-fns').default);
