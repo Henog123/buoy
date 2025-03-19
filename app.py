@@ -107,7 +107,32 @@ def clean_data(data):
         "timestamp": data.timestamp.strftime('%Y-%m-%d %H:%M:%S')
     }
 
+@app.route("/api/live_data")
+def live_data():
+    # Get the latest record for each tracker
+    subquery = db.session.query(
+        GPSData.tracker_id,
+        func.max(GPSData.timestamp).label('latest_timestamp')
+    ).group_by(GPSData.tracker_id).subquery()
 
+    # Get the latest location data for each tracker
+    latest_data = GPSData.query.join(
+        subquery,
+        (GPSData.tracker_id == subquery.c.tracker_id) &
+        (GPSData.timestamp == subquery.c.latest_timestamp)
+    ).all()
+
+    # Format data for JSON
+    data = [{
+        "tracker_id": record.tracker_id,
+        "lat": record.lat,
+        "lon": record.lon,
+        "wind_speed": record.wind_speed,
+        "water_temp": record.water_temp,
+        "timestamp": record.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    } for record in latest_data]
+
+    return jsonify(data)
 
 
 # Page to View GPS Location History
