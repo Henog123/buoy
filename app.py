@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import upgrade
+from sqlalchemy import func
 
 # Initialize Flask app
 app = Flask(__name__)
