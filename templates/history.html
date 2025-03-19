@@ -57,10 +57,17 @@
         .container {
             margin: 20px;
         }
-        
+        #trackerChart {
+    max-width: 80%;
+    margin: 20px auto;
+    display: block;
+}
+
     </style>
     <!-- Add Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Add Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -78,6 +85,18 @@
 
     <!-- Map Container -->
     <div id="map"></div>
+    <h2>Tracker Data Over Time</h2>
+<div style="text-align: center;">
+    <label for="time-range">Select Time Range:</label>
+    <select id="time-range">
+        <option value="day">Last 24 Hours</option>
+        <option value="week" selected>Last 7 Days</option>
+        <option value="month">Last 30 Days</option>
+    </select>
+</div>
+<canvas id="trackerChart" width="80%" height="40"></canvas>
+
+
     
         <h2>Location Data</h2>
     <table>
@@ -139,6 +158,99 @@ locations.forEach(function (location) {
         .addTo(map)
         .bindPopup(popupContent);
 });
+
+    // Prepare data for the chart
+var chartData = locations.map(function (location) {
+    return {
+        timestamp: new Date(location.timestamp),  // Convert timestamp to Date
+        wind_speed: location.wind_speed,
+        water_temp: location.water_temp
+    };
+});
+
+// Function to filter data based on selected time range
+function filterData(timeRange) {
+    var now = new Date();
+    var filteredData = chartData.filter(function (data) {
+        var timeDiff = (now - data.timestamp) / (1000 * 60 * 60 * 24);  // Difference in days
+        if (timeRange === "day") return timeDiff <= 1;
+        if (timeRange === "week") return timeDiff <= 7;
+        if (timeRange === "month") return timeDiff <= 30;
+    });
+    return filteredData;
+}
+
+        // Get chart canvas
+var ctx = document.getElementById('trackerChart').getContext('2d');
+
+// Create initial chart
+var trackerChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [
+            {
+                label: 'Wind Speed (m/s)',
+                data: [],
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                fill: true
+            },
+            {
+                label: 'Water Temperature (°C)',
+                data: [],
+                borderColor: 'red',
+                backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                fill: true
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'hour',
+                    displayFormats: {
+                        hour: 'MMM d, h a'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Timestamp'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Value'
+                }
+            }
+        }
+    }
+});
+
+// Update chart data
+function updateChart(timeRange) {
+    var filteredData = filterData(timeRange);
+
+    // Update labels and data
+    trackerChart.data.labels = filteredData.map(data => data.timestamp);
+    trackerChart.data.datasets[0].data = filteredData.map(data => data.wind_speed);
+    trackerChart.data.datasets[1].data = filteredData.map(data => data.water_temp);
+    trackerChart.update();
+}
+
+// Initial load (default to week)
+updateChart('week');
+
+// Listen for time range selection change
+document.getElementById('time-range').addEventListener('change', function () {
+    updateChart(this.value);
+});
+
 
 // Create an array of LatLng points from locations
 var latlngs = locations.map(function (location) {
