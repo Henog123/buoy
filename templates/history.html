@@ -181,15 +181,12 @@ google.charts.setOnLoadCallback(drawChart);
 
 
 function drawChart() {
-    // Get the tracker data passed from the backend (Flask)
-            var trackerData = {{ tracker_data|tojson }};
+    var trackerData = JSON.parse('{{ bouy_data | tojson }}'); // Parse the JSON string into a JavaScript object
 
-            // Create the DataTable for Google Charts
             var data = new google.visualization.DataTable();
             data.addColumn('datetime', 'Time');
             data.addColumn('number', 'Wind Speed (m/s)');
 
-            // Loop through tracker data and add it to the DataTable
             trackerData.forEach(function(point) {
                 data.addRow([new Date(point.timestamp), point.wind_speed]);
             });
