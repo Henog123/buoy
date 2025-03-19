@@ -17,16 +17,17 @@ db = SQLAlchemy(app)
 
 
 # Define the GPSData model
-class GPSData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    tracker_id = db.Column(db.String, nullable=False)
-    lat = db.Column(db.Float, nullable=False)
-    lon = db.Column(db.Float, nullable=False)
-    wind_speed = db.Column(db.Float, nullable=True)
-    water_temp = db.Column(db.Float, nullable=True)
-    timestamp = db.Column(db.DateTime, server_default=db.func.now())
+class GPSData:
+    def __init__(self, timestamp, wind_speed, lat, lon, water_temp, tracker_id):
+        self.timestamp = timestamp
+        self.wind_speed = wind_speed
+        self.lat = lat
+        self.lon = lon
+        self.water_temp = water_temp
+        self.tracker_id = tracker_id
 
-     def to_dict(self):
+    # The to_dict() method should be indented properly within the class
+    def to_dict(self):
         return {
             'timestamp': self.timestamp,
             'wind_speed': self.wind_speed,
