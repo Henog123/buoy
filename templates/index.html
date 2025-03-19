@@ -79,13 +79,13 @@
             <th>Water Temperature (°C)</th>
             <th>Timestamp</th>
         </tr>
-        {% for loc in locations %}
+        {% for data in tracker_data %}
         <tr>
-            <td>{{ loc.lat }}</td>
-            <td>{{ loc.lon }}</td>
-            <td>{{ loc.wind_speed }}</td>
-            <td>{{ loc.water_temp }}</td>
-            <td>{{ loc.timestamp }}</td>
+            <td>{{ data.lat }}</td>
+            <td>{{ data.lon }}</td>
+            <td>{{ data.wind_speed }}</td>
+            <td>{{ data.water_temp }}</td>
+            <td>{{ data.timestamp }}</td>
         </tr>
         {% endfor %}
     </table>
