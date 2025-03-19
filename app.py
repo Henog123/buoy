@@ -110,7 +110,7 @@ def clean_data(data):
 # Page to View GPS Location History
 @app.route("/history/<int:tracker_id>")
 def history(tracker_id):
-    tracker_data = GPSData.query.filter_by(tracker_id=tracker_id).order_by(GPSData.timestamp.desc()).all()
+    tracker_data = GPSData.query.filter_by(tracker_id=str(tracker_id)).order_by(GPSData.timestamp.desc()).all()
 
     if not tracker_data:
         return "No data found for this tracker.", 404
