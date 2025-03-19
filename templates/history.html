@@ -179,21 +179,20 @@ google.charts.load('current', {'packages':['corechart']});
 // Draw chart when loaded
 google.charts.setOnLoadCallback(drawChart);
 
-// Sample data for testing (replace with real API data)
-var dataPoints = [
-    { timestamp: '2025-03-18T12:00:00', wind_speed: 5.2 },
-    { timestamp: '2025-03-18T13:00:00', wind_speed: 6.8 },
-    { timestamp: '2025-03-18T14:00:00', wind_speed: 7.1 }
-];
 
 function drawChart() {
-    var data = new google.visualization.DataTable();
-    data.addColumn('datetime', 'Time');
-    data.addColumn('number', 'Wind Speed (m/s)');
+    // Get the tracker data passed from the backend (Flask)
+            var trackerData = {{ tracker_data|tojson }};
 
-    dataPoints.forEach(function(point) {
-        data.addRow([new Date(point.timestamp), point.wind_speed]);
-    });
+            // Create the DataTable for Google Charts
+            var data = new google.visualization.DataTable();
+            data.addColumn('datetime', 'Time');
+            data.addColumn('number', 'Wind Speed (m/s)');
+
+            // Loop through tracker data and add it to the DataTable
+            trackerData.forEach(function(point) {
+                data.addRow([new Date(point.timestamp), point.wind_speed]);
+            });
 
     var options = {
         title: 'Wind Speed Over Time',
