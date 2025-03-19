@@ -50,7 +50,10 @@ def home():
     # Clean the data to avoid None/Undefined issues
     clean_gps_data = [clean_data(data) for data in latest_data]
 
-    return render_template("index.html", gps_data=clean_gps_data)
+    #get all data for table
+    all_data = GPSData.query.order_by(GPSData.timestamp.desc()).all()
+    
+    return render_template("index.html", gps_data=clean_gps_data, tracker_data=all_data)
 
 # API Endpoint to Update GPS Location
 @app.route("/update_location", methods=["POST"])
