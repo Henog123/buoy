@@ -20,6 +20,7 @@
             border-collapse: collapse;
             margin: 0 auto;
             margin-bottom: 40px;
+            margin-top: 40px;
         }
         th, td {
             padding: 10px;
@@ -85,11 +86,6 @@
             {% if data.tracker_id not in seen_trackers %}
                 <tr id="tracker-{{ data.tracker_id }}">
                     <td>{{ data.tracker_id }}</td>
-                    <td>{{ data.lat }}</td>
-                    <td>{{ data.lon }}</td>
-                    <td>{{ data.wind_speed }}</td>
-                    <td>{{ data.water_temp }}</td>
-                    <td>{{ data.timestamp }}</td>
                     <td>
                         <button onclick="deleteTracker({{ data.tracker_id }})">Delete</button>
                     </td>
@@ -107,7 +103,7 @@
 
             if (confirmDelete) {
                 try {
-                    const response = await fetch(`/delete_locations_by_tracker_id?tracker_id={tracker_id}`, {
+                    const response = await fetch(`/delete_locations_by_tracker_id?tracker_id=${tracker_id}`, {
                         method: 'DELETE',
                     });
 
