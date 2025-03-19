@@ -65,8 +65,9 @@
     <!-- Chart.js CDN -->
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0"></script>
+   
+
 
 </head>
 <body>
@@ -197,8 +198,8 @@ var dataPoints = [
 ];
 
 // Format data for the chart
-var labels = chartData.map(data => data.x);
-var windSpeedData = chartData.map(data => data.y);
+var labels = trackerData.map(data => new Date(data.timestamp));
+var windSpeedData = trackerData.map(data => data.wind_speed);
 
 // Create the chart
 var trackerChart = new Chart(ctx, {
