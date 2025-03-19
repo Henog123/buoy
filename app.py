@@ -34,20 +34,23 @@ with app.app_context():
 @app.route("/")
 def home():
     
-     # Get the latest record for each tracker_id
+    # Get the latest record for each tracker_id
     subquery = db.session.query(
         GPSData.tracker_id,
         func.max(GPSData.timestamp).label('latest_timestamp')
     ).group_by(GPSData.tracker_id).subquery()
 
-    # Join subquery to get the latest data for each tracker
+    # Join to get the latest data for each tracker
     latest_data = GPSData.query.join(
         subquery,
         (GPSData.tracker_id == subquery.c.tracker_id) &
         (GPSData.timestamp == subquery.c.latest_timestamp)
     ).all()
 
-    return render_template("index.html")
+    # Clean the data to avoid None/Undefined issues
+    clean_gps_data = [clean_data(data) for data in latest_data]
+
+    return render_template("index.html", gps_data=clean_gps_data)
 
 # API Endpoint to Update GPS Location
 @app.route("/update_location", methods=["POST"])
