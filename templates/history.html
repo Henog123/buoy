@@ -210,30 +210,30 @@ var trackerChart = new Chart(ctx, {
         ]
     },
     options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-    x: {
-        type: 'time',
-        time: {
-            unit: 'hour',
-            displayFormats: {
-                hour: 'MMM d, h a'
+    responsive: true,
+    maintainAspectRatio: false,  // Prevent aspect ratio changes
+    scales: {
+        x: {
+            type: 'time',
+            time: {
+                unit: 'hour',
+                displayFormats: {
+                    hour: 'MMM d, h a'
+                }
+            },
+            title: {
+                display: true,
+                text: 'Timestamp'
             }
         },
-        title: {
-            display: true,
-            text: 'Timestamp'
-        }
-    },
-    y: {
-        title: {
-            display: true,
-            text: 'Value'
+        y: {
+            title: {
+                display: true,
+                text: 'Value'
+            }
         }
     }
 }
-    }
 });
 
 // Update chart data
