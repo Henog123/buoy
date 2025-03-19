@@ -56,7 +56,7 @@ def home():
     return render_template("index.html", gps_data=clean_gps_data, tracker_data=all_data)
 
 @app.route("/settings")
-def home():
+def settings():
     
     # Get the latest record for each tracker_id
     subquery = db.session.query(
