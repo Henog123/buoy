@@ -74,6 +74,45 @@
             <a href="/settings">Settings</a>
         </div>
     </div>
+    <table>
+        <tr>
+            <th>Tracker</th>
+            <th>DELETE</th>
+            
+        </tr>
+        {% for data in tracker_data %}
+        <tr>
+            <td>{{ data.tracker_id }}</td>
+            <td><button onclick="deleteTracker({{ tracker.id }})">Delete</button></td>
+            
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+    <script>
+        // Function to delete the tracker by ID
+        async function deleteTracker(trackerId) {
+            const confirmDelete = confirm('Are you sure you want to delete this tracker?');
 
+            if (confirmDelete) {
+                try {
+                    const response = await fetch(`/delete_tracker_by_id/${trackerId}`, {
+                        method: 'DELETE',
+                    });
 
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert(data.message); // Notify the user about successful deletion
+                        document.getElementById(`tracker-${trackerId}`).remove(); // Remove the row from the table
+                    } else {
+                        alert(data.message); // Show error message if something went wrong
+                    }
+                } catch (error) {
+                    console.error('Error deleting tracker:', error);
+                    alert('Error deleting tracker.');
+                }
+            }
+        }
+    </script>
 </html>
