@@ -183,29 +183,13 @@ if (locations.length > 0) {
 
 
         
-var trackerData = [
-    {% for data in tracker_data %}
-        {
-            timestamp: "{{ data.timestamp }}",  // timestamp from server
-            wind_speed: {{ data.wind_speed }}   // wind speed from server
-        }
-        {% if not loop.last %},{% endif %}
-    {% endfor %}
-];
 
-// Convert timestamps to Date objects and prepare the data for the chart
-var chartData = trackerData.map(function(location) {
-    return {
-        x: new Date(location.timestamp),  // Convert timestamp string to Date object
-        y: location.wind_speed            // Wind speed value
-    };
-});
 
 // Register Date Adapter
-Chart.register(window['chartjs-adapter-date-fns']);
+Chart.register(Chart.registry.get('dateAdapter'));
 
 // Get canvas context
-var ctx = document.getElementById('trackerChart').getContext('2d');
+var ctx = document.getElementById('windSpeedChart').getContext('2d');
 
 // Sample data for testing (replace with your real data)
 var dataPoints = [
@@ -215,8 +199,8 @@ var dataPoints = [
 ];
 
 // Format data for the chart
-var labels = dataPoints.map(data => new Date(data.timestamp));
-var windSpeedData = dataPoints.map(data => data.wind_speed);
+var labels = chartData.map(data => data.x);
+var windSpeedData = chartData.map(data => data.y);
 
 // Create the chart
 var trackerChart = new Chart(ctx, {
