@@ -96,6 +96,21 @@ def delete_locations_by_timestamp():
     else:
         return jsonify({"message": "No matching locations found"}), 404
 
+@app.route("/delete_locations_by_tracker_id", methods=["DELETE"])
+def delete_locations_by_tracker_id():
+    tracker_id = request.args.get('tracker_id')  # Get the tracker_id parameter
+
+    # Delete records with that tracker_id
+    gps_data = db.session.query(GPSData).filter(GPSData.tracker_id == tracker_id).all()
+
+    if gps_data:
+        for data in gps_data:
+            db.session.delete(data)
+        db.session.commit()
+        return jsonify({"message": "Locations deleted successfully"})
+    else:
+        return jsonify({"message": "No matching locations found"}), 404
+
 def clean_data(data):
     return {
         "id": data.id,
