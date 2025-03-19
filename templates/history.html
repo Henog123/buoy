@@ -58,7 +58,9 @@
             margin: 20px;
         }
         #trackerChart {
-    width: 80%;
+    width: 80% !important; /* Limit width to 80% of parent container */
+    max-width: 800px;     /* Prevent it from stretching too wide */
+    height: 400px !important; /* Set fixed height */
     margin: 20px auto;
     display: block;
 }
@@ -93,7 +95,7 @@
         <option value="month">Last 30 Days</option>
     </select>
 </div>
-<canvas id="trackerChart" width="80%" height="40"></canvas>
+<canvas id="trackerChart"></canvas>
 
 
     
@@ -216,7 +218,7 @@ var trackerChart = new Chart(ctx, {
     },
     options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         scales: {
             x: {
                 type: 'time',
