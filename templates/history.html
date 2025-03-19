@@ -82,6 +82,7 @@
         <h2>Location Data</h2>
     <table>
         <tr>
+            <th>Tracker</th>
             <th>Latitude</th>
             <th>Longitude</th>
             <th>Wind Speed (m/s)</th>
@@ -90,6 +91,7 @@
         </tr>
         {% for loc in locations %}
         <tr>
+            <td>{{ loc.lat }}</td>
             <td>{{ loc.lat }}</td>
             <td>{{ loc.lon }}</td>
             <td>{{ loc.wind_speed }}</td>
@@ -114,6 +116,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 var locations = [
     {% for loc in locations %}
         {
+            tracker_id: {{loc.tracker_id}},
             lat: {{ loc.lat }},
             lon: {{ loc.lon }},
             wind_speed: {{ loc.wind_speed }},
@@ -127,6 +130,7 @@ var locations = [
 // Add markers with extra information (popup)
 locations.forEach(function (location) {
     var popupContent = `
+        <strong>Tracker:</strong> ${location.tracker_id}<br>
         <strong>Coordinates:</strong> ${location.lat}, ${location.lon}<br>
         <strong>Wind Speed:</strong> ${location.wind_speed} m/s<br>
         <strong>Water Temp:</strong> ${location.water_temp} °C<br>
