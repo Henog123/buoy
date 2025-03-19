@@ -89,14 +89,14 @@
             <th>Water Temperature (°C)</th>
             <th>Timestamp</th>
         </tr>
-        {% for loc in locations %}
+        {% for data in tracker_data %}
         <tr>
-            <td>{{ loc.tracker_id }}</td>
-            <td>{{ loc.lat }}</td>
-            <td>{{ loc.lon }}</td>
-            <td>{{ loc.wind_speed }}</td>
-            <td>{{ loc.water_temp }}</td>
-            <td>{{ loc.timestamp }}</td>
+            <td>{{ data.tracker_id }}</td>
+            <td>{{ data.lat }}</td>
+            <td>{{ data.lon }}</td>
+            <td>{{ data.wind_speed }}</td>
+            <td>{{ data.water_temp }}</td>
+            <td>{{ data.timestamp }}</td>
         </tr>
         {% endfor %}
     </table>
@@ -114,14 +114,14 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Add markers for each location
 var locations = [
-    {% for loc in locations %}
+    {% for data in tracker_data %}
         {
-            tracker_id: "{{loc.tracker_id}}",
-            lat: {{ loc.lat }},
+            tracker_id: "{{data.tracker_id}}",
+            lat: {{ data.lat }},
             lon: {{ loc.lon }},
-            wind_speed: {{ loc.wind_speed }},
-            water_temp: {{ loc.water_temp }},
-            timestamp: "{{ loc.timestamp }}"
+            wind_speed: {{ data.wind_speed }},
+            water_temp: {{ data.water_temp }},
+            timestamp: "{{ data.timestamp }}"
         }
         {% if not loop.last %},{% endif %}
     {% endfor %}
