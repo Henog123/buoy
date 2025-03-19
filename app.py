@@ -139,11 +139,12 @@ def live_data():
 @app.route("/history/<int:tracker_id>")
 def history(tracker_id):
     tracker_data = GPSData.query.filter_by(tracker_id=str(tracker_id)).order_by(GPSData.timestamp.desc()).all()
-
+    tracker_data_dicts = [data.to_dict() for data in tracker_data]
+    
     if not tracker_data:
         return "No data found for this tracker.", 404
 
-    return render_template("history.html", tracker_data=tracker_data)
+    return render_template("history.html", tracker_data=tracker_data, bouy_data=json.dumps(tracker_data_dicts))
 
 
 # Run Flask app with dynamic port
