@@ -121,8 +121,11 @@
 
     <!-- Add Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <!-- Add Chart.js Library -->
+
+    <!-- Chart.js and Date Adapter -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
     <script>
 // Initialize the map
 var map = L.map('map').setView([0, 0], 2);  // Default to world view
@@ -210,26 +213,26 @@ var trackerChart = new Chart(ctx, {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-            x: {
-                type: 'time',
-                time: {
-                    unit: 'hour',
-                    displayFormats: {
-                        hour: 'MMM d, h a'
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'Timestamp'
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Value'
-                }
+    x: {
+        type: 'time',
+        time: {
+            unit: 'hour',
+            displayFormats: {
+                hour: 'MMM d, h a'
             }
+        },
+        title: {
+            display: true,
+            text: 'Timestamp'
         }
+    },
+    y: {
+        title: {
+            display: true,
+            text: 'Value'
+        }
+    }
+}
     }
 });
 
