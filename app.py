@@ -26,6 +26,18 @@ class GPSData(db.Model):
     water_temp = db.Column(db.Float, nullable=True)
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
 
+     def to_dict(self):
+        return {
+            'timestamp': self.timestamp,
+            'wind_speed': self.wind_speed,
+            'lat': self.lat,
+            'lon': self.lon,
+            'water_temp': self.water_temp,
+            'tracker_id': self.tracker_id
+        }
+
+
+
 # Create the database tables
 with app.app_context():
     db.create_all()
