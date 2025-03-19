@@ -190,10 +190,10 @@ function drawChart() {
     data.addColumn('datetime', 'Time');  // First column as datetime
     data.addColumn('number', 'Wind Speed (m/s)');  // Second column as number (wind speed)
 
-    // Loop through the tracker data and add rows to the DataTable
-    trackerData.forEach(function(point) {
+    
+    locations.forEach(function(location) {
         // Adding each row (timestamp and wind speed)
-        data.addRow([new Date(point.timestamp), point.wind_speed]);
+        data.addRow([new Date(location.timestamp), location.wind_speed]);
     });
 
     // Define the chart options
