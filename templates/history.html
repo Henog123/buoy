@@ -91,7 +91,7 @@
         </tr>
         {% for loc in locations %}
         <tr>
-            <td>{{ loc.lat }}</td>
+            <td>{{ loc.tracker_id }}</td>
             <td>{{ loc.lat }}</td>
             <td>{{ loc.lon }}</td>
             <td>{{ loc.wind_speed }}</td>
@@ -116,7 +116,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 var locations = [
     {% for loc in locations %}
         {
-            tracker_id: {{loc.tracker_id}},
+            tracker_id: "{{loc.tracker_id}}",
             lat: {{ loc.lat }},
             lon: {{ loc.lon }},
             wind_speed: {{ loc.wind_speed }},
