@@ -83,7 +83,7 @@
         {% for data in tracker_data %}
         <tr>
             <td>{{ data.tracker_id }}</td>
-            <td><button onclick="deleteTracker({{ tracker.id }})">Delete</button></td>
+            <td><button onclick="deleteTracker({{ data.tracker_id }})">Delete</button></td>
             
         </tr>
         {% endfor %}
