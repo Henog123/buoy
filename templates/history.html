@@ -58,7 +58,7 @@
             margin: 20px;
         }
         #trackerChart {
-    max-width: 80%;
+    width: 80%;
     margin: 20px auto;
     display: block;
 }
@@ -125,7 +125,9 @@
     <!-- Chart.js and Date Adapter -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-
+    <script>
+    Chart.register(Chart.adapters.dateFns);
+    </script>
     <script>
 // Initialize the map
 var map = L.map('map').setView([0, 0], 2);  // Default to world view
@@ -187,6 +189,9 @@ function filterData(timeRange) {
         // Get chart canvas
 var ctx = document.getElementById('trackerChart').getContext('2d');
 
+// Register the date adapter explicitly
+Chart.register(Chart.adapters.dateFns);
+
 // Create initial chart
 var trackerChart = new Chart(ctx, {
     type: 'line',
@@ -210,31 +215,32 @@ var trackerChart = new Chart(ctx, {
         ]
     },
     options: {
-    responsive: true,
-    maintainAspectRatio: false,  // Prevent aspect ratio changes
-    scales: {
-        x: {
-            type: 'time',
-            time: {
-                unit: 'hour',
-                displayFormats: {
-                    hour: 'MMM d, h a'
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'hour',
+                    displayFormats: {
+                        hour: 'MMM d, h a'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Timestamp'
                 }
             },
-            title: {
-                display: true,
-                text: 'Timestamp'
-            }
-        },
-        y: {
-            title: {
-                display: true,
-                text: 'Value'
+            y: {
+                title: {
+                    display: true,
+                    text: 'Value'
+                }
             }
         }
     }
-}
 });
+
 
 // Update chart data
 function updateChart(timeRange) {
