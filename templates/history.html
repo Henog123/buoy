@@ -201,42 +201,59 @@ var chartData = trackerData.map(function(location) {
     };
 });
 
-// Register the date adapter globally before creating the chart
+// Register Date Adapter
 Chart.register(window['chartjs-adapter-date-fns']);
 
-        
+// Get canvas context
+var ctx = document.getElementById('trackerChart').getContext('2d');
+
+// Sample data for testing (replace with your real data)
+var dataPoints = [
+    { timestamp: '2025-03-18T12:00:00', wind_speed: 5.2 },
+    { timestamp: '2025-03-18T13:00:00', wind_speed: 6.8 },
+    { timestamp: '2025-03-18T14:00:00', wind_speed: 7.1 }
+];
+
+// Format data for the chart
+var labels = dataPoints.map(data => new Date(data.timestamp));
+var windSpeedData = dataPoints.map(data => data.wind_speed);
+
 // Create the chart
-var ctx = document.getElementById('windSpeedChart').getContext('2d');
-var windSpeedChart = new Chart(ctx, {
-    type: 'line',  // Line chart type
+var trackerChart = new Chart(ctx, {
+    type: 'line',
     data: {
-        datasets: [{
-            label: 'Wind Speed (m/s)', // Label for the dataset
-            data: chartData,           // Data points
-            borderColor: 'blue',       // Line color
-            backgroundColor: 'rgba(0, 0, 255, 0.2)',  // Line fill color (transparent)
-            fill: true,                // Fill area under the line
-            tension: 0.1               // Line smoothing
-        }]
+        labels: labels,
+        datasets: [
+            {
+                label: 'Wind Speed (m/s)',
+                data: windSpeedData,
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                fill: true
+            }
+        ]
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
             x: {
-                type: 'time',  // Use time scale for the X-axis
+                type: 'time',
                 time: {
-                    unit: 'minute',  // Unit for the time scale (adjust as needed)
-                    tooltipFormat: 'll HH:mm'  // Format for the tooltip
+                    unit: 'hour',
+                    displayFormats: {
+                        hour: 'MMM d, h a'
+                    }
                 },
                 title: {
                     display: true,
-                    text: 'Timestamp'  // Label for X-axis
+                    text: 'Timestamp'
                 }
             },
             y: {
                 title: {
                     display: true,
-                    text: 'Wind Speed (m/s)'  // Label for Y-axis
+                    text: 'Wind Speed (m/s)'
                 }
             }
         }
