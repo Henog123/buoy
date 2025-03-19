@@ -108,13 +108,6 @@ def clean_data(data):
 
 
 # Page to View GPS Location History
-@app.route("/history")
-def history():
-    # Get all past GPS locations (most recent first)
-    locations = GPSData.query.order_by(GPSData.timestamp.desc()).all()
-    tracker_data = GPSData.query.filter_by(tracker_id=tracker_id).order_by(GPSData.timestamp.desc()).all()
-    return render_template("history.html", locations=locations)
-
 @app.route("/history/<int:tracker_id>")
 def history(tracker_id):
     tracker_data = GPSData.query.filter_by(tracker_id=tracker_id).order_by(GPSData.timestamp.desc()).all()
