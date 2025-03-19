@@ -90,36 +90,94 @@
         {% endfor %}
     </table>
     <script>
-        // Create the map and set initial view
-    var map = L.map('map').setView([0, 0], 2);
+    // Create the map and set initial view
+var map = L.map('map').setView([0, 0], 2);
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-    }).addTo(map);
+// Add OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+}).addTo(map);
 
-    // Load live GPS data
-    var locations = {{ gps_data | tojson }};
-    locations.forEach(function(location) {
-        var marker = L.marker([location.lat, location.lon]).addTo(map);
-        
-        // Popup with tracker info and link to history
-        var popupContent = `
-            <b>Tracker ID:</b> ${location.tracker_id}<br>
-            <b>Wind Speed:</b> ${location.wind_speed} m/s<br>
-            <b>Water Temp:</b> ${location.water_temp} °C<br>
-            <b>Last Updated:</b> ${location.timestamp}<br>
-            <a href="/history/${location.tracker_id}">View History</a>
-        `;
+// Define an empty markers object to manage existing markers
+var markers = {};
 
-        marker.bindPopup(popupContent);
-    });
+// Async function to load initial GPS data passed from Jinja
+async function loadInitialData() {
+    try {
+        var locations = {{ gps_data | tojson }};
 
-    // Adjust map to fit all markers
-    var group = new L.featureGroup(locations.map(function(location) {
-        return L.marker([location.lat, location.lon]);
-    }));
-    map.fitBounds(group.getBounds());
+        // Loop through initial locations and add markers
+        for (let location of locations) {
+            await addMarker(location);
+        }
+
+        // Adjust map to fit initial markers
+        adjustMapBounds(Object.values(markers));
+    } catch (error) {
+        console.error("Error loading initial data:", error);
+    }
+}
+
+// Async function to fetch live GPS data from the API
+async function fetchLiveData() {
+    try {
+        const response = await fetch('/api/live_data');
+        const locations = await response.json();
+
+        // Clear existing markers before adding new ones
+        clearMarkers();
+
+        // Loop through new locations and add markers
+        for (let location of locations) {
+            await addMarker(location);
+        }
+
+        // Adjust map to fit new markers
+        adjustMapBounds(Object.values(markers));
+    } catch (error) {
+        console.error("Error fetching live data:", error);
+    }
+}
+
+// Async function to add a marker to the map
+async function addMarker(location) {
+    var marker = L.marker([location.lat, location.lon]).addTo(map);
+
+    // Popup with tracker info and link to history
+    var popupContent = `
+        <b>Tracker ID:</b> ${location.tracker_id}<br>
+        <b>Wind Speed:</b> ${location.wind_speed} m/s<br>
+        <b>Water Temp:</b> ${location.water_temp} °C<br>
+        <b>Last Updated:</b> ${location.timestamp}<br>
+        <a href="/history/${location.tracker_id}">View History</a>
+    `;
+
+    marker.bindPopup(popupContent);
+    markers[location.tracker_id] = marker;
+}
+
+// Function to clear all existing markers
+function clearMarkers() {
+    for (var id in markers) {
+        map.removeLayer(markers[id]);
+    }
+    markers = {};
+}
+
+// Function to adjust map bounds to fit markers
+function adjustMapBounds(markerList) {
+    if (markerList.length > 0) {
+        var group = new L.featureGroup(markerList);
+        map.fitBounds(group.getBounds());
+    }
+}
+
+// Load initial data
+loadInitialData();
+
+// Update map every 5 seconds
+setInterval(fetchLiveData, 5000);
+
     </script>
 </body>
 </html>
