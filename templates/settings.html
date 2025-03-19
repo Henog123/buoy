@@ -78,25 +78,26 @@
         <tr>
             <th>Tracker</th>
             <th>DELETE</th>
-            
         </tr>
-        {% for data in tracker_data %}
-        <tr>
-            {% set seen_trackers = [] %}
-        {% for tracker in trackers %}
-            {% if tracker.tracker_id not in seen_trackers %}
-                <tr id="tracker-{{ tracker.tracker_id }}">
-                    <td>{{ tracker.tracker_id }}</td>
-                    <td> <button onclick="deleteTracker({{ tracker.tracker_id }})">Delete</button> </td>
-                </tr>
+        <tbody id="trackerTableBody">
+        {% set seen_trackers = [] %}
+            {% for tracker in trackers %}
+                {% if tracker.tracker_id not in seen_trackers %}
+                    <tr id="tracker-{{ tracker.tracker_id }}">
+                        <td>{{ tracker.tracker_id }}</td>
+                        <td>{{ tracker.lat }}</td>
+                        <td>{{ tracker.lon }}</td>
+                        <td>{{ tracker.wind_speed }}</td>
+                        <td>{{ tracker.water_temp }}</td>
+                        <td>{{ tracker.timestamp }}</td>
+                        <td>
+                            <button onclick="deleteTracker({{ tracker.tracker_id }})">Delete</button>
+                        </td>
+                    </tr>
                 {% set _ = seen_trackers.append(tracker.tracker_id) %}
-            {% else %}
-                <!-- Skip row if tracker_id already listed -->
-                {% continue %}
             {% endif %}
         {% endfor %}
-        </tr>
-        {% endfor %}
+    </tbody>
     </table>
 </body>
     <script>
