@@ -139,6 +139,30 @@ locations.forEach(function (location) {
         .addTo(map)
         .bindPopup(popupContent);
 });
+
+// Create an array of LatLng points from locations
+var latlngs = locations.map(function (location) {
+    return [location.lat, location.lon];
+});
+
+// Draw a polyline connecting the points
+if (latlngs.length > 1) {
+    var polyline = L.polyline(latlngs, {
+        color: 'blue',     // Line color
+        weight: 3,         // Line thickness
+        opacity: 0.8,      // Line opacity
+    }).addTo(map);
+
+    // Fit the map to show the polyline
+    map.fitBounds(polyline.getBounds());
+}
+
+    var polyline = L.polyline(latlngs, {
+    color: 'blue',          // Change line color
+    weight: 5,             // Make the line thicker
+    opacity: 0.9,          // Make the line more visible
+    dashArray: '5, 10'     // Make the line dashed
+}).addTo(map);
         
 // Center the map to the last location if available
 if (locations.length > 0) {
