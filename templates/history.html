@@ -124,12 +124,18 @@
     <!-- Add Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <!-- Chart.js and Date Adapter -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-    <script>
-    Chart.register(Chart.adapters.dateFns);
-    </script>
+<!-- Chart.js 3.x -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<!-- Correct Date Adapter -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0"></script>
+
+<script> Chart.register(Chart.adapters.dateFns);</script>
+
+
+
+
+    
     <script>
 // Initialize the map
 var map = L.map('map').setView([0, 0], 2);  // Default to world view
@@ -166,7 +172,15 @@ locations.forEach(function (location) {
         .addTo(map)
         .bindPopup(popupContent);
 });
+        // Register the date adapter
+import { Chart } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 
+// Explicitly register the adapter
+Chart.register(require('chartjs-adapter-date-fns').default);
+
+
+        
     // Prepare data for the chart
 var chartData = locations.map(function (location) {
     return {
@@ -191,8 +205,7 @@ function filterData(timeRange) {
         // Get chart canvas
 var ctx = document.getElementById('trackerChart').getContext('2d');
 
-// Register the date adapter explicitly
-Chart.register(Chart.adapters.dateFns);
+
 
 // Create initial chart
 var trackerChart = new Chart(ctx, {
