@@ -81,6 +81,7 @@ def delete_locations_by_timestamp():
 def history():
     # Get all past GPS locations (most recent first)
     locations = GPSData.query.order_by(GPSData.timestamp.desc()).all()
+    tracker_data = GPSData.query.filter_by(tracker_id=tracker_id).order_by(GPSData.timestamp.desc()).all()
     return render_template("history.html", locations=locations)
 
 # Run Flask app with dynamic port
