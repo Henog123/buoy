@@ -115,6 +115,16 @@ def history():
     tracker_data = GPSData.query.filter_by(tracker_id=tracker_id).order_by(GPSData.timestamp.desc()).all()
     return render_template("history.html", locations=locations)
 
+@app.route("/history/<int:tracker_id>")
+def history(tracker_id):
+    tracker_data = GPSData.query.filter_by(tracker_id=tracker_id).order_by(GPSData.timestamp.desc()).all()
+
+    if not tracker_data:
+        return "No data found for this tracker.", 404
+
+    return render_template("history.html", tracker_data=tracker_data)
+
+
 # Run Flask app with dynamic port
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
