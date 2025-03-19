@@ -90,6 +90,19 @@ def delete_locations_by_timestamp():
     else:
         return jsonify({"message": "No matching locations found"}), 404
 
+def clean_data(data):
+    return {
+        "id": data.id,
+        "tracker_id": data.tracker_id,
+        "lat": data.lat,
+        "lon": data.lon,
+        "wind_speed": data.wind_speed if data.wind_speed is not None else 0.0,
+        "water_temp": data.water_temp if data.water_temp is not None else 0.0,
+        "timestamp": data.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    }
+
+
+
 
 # Page to View GPS Location History
 @app.route("/history")
