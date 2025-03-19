@@ -175,6 +175,68 @@ if (locations.length > 0) {
     });
     map.fitBounds(bounds);
 }
+
+
+
+
+
+
+        
+var trackerData = [
+    {% for data in tracker_data %}
+        {
+            timestamp: "{{ data.timestamp }}",  // timestamp from server
+            wind_speed: {{ data.wind_speed }}   // wind speed from server
+        }
+        {% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+// Convert timestamps to Date objects and prepare the data for the chart
+var chartData = trackerData.map(function(location) {
+    return {
+        x: new Date(location.timestamp),  // Convert timestamp string to Date object
+        y: location.wind_speed            // Wind speed value
+    };
+});
+
+// Create the chart
+var ctx = document.getElementById('windSpeedChart').getContext('2d');
+var windSpeedChart = new Chart(ctx, {
+    type: 'line',  // Line chart type
+    data: {
+        datasets: [{
+            label: 'Wind Speed (m/s)', // Label for the dataset
+            data: chartData,           // Data points
+            borderColor: 'blue',       // Line color
+            backgroundColor: 'rgba(0, 0, 255, 0.2)',  // Line fill color (transparent)
+            fill: true,                // Fill area under the line
+            tension: 0.1               // Line smoothing
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            x: {
+                type: 'time',  // Use time scale for the X-axis
+                time: {
+                    unit: 'minute',  // Unit for the time scale (adjust as needed)
+                    tooltipFormat: 'll HH:mm'  // Format for the tooltip
+                },
+                title: {
+                    display: true,
+                    text: 'Timestamp'  // Label for X-axis
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Wind Speed (m/s)'  // Label for Y-axis
+                }
+            }
+        }
+    }
+});
         
 console.log(locations);
 
