@@ -82,7 +82,7 @@
     <div id="map"></div>
 
     <div id="windSpeedChart" style="width: 100%; height: 400px;"></div>
-    
+    <div id="waterTempChart" style="width: 100%; height: 400px;"></div>
         <h2>Location Data</h2>
     <table>
         <tr>
@@ -178,26 +178,28 @@ google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawChart);
 
 function drawChart() {
-    // Assuming trackerData is an array of objects returned from your API (in Python or from an endpoint)
-    var trackerData = [
-        { timestamp: '2025-03-18T12:00:00', wind_speed: 5.2 },
-        { timestamp: '2025-03-18T13:00:00', wind_speed: 6.8 },
-        { timestamp: '2025-03-18T14:00:00', wind_speed: 7.1 }
-    ];
 
     // Create a DataTable object for Google Charts
-    var data = new google.visualization.DataTable();
-    data.addColumn('datetime', 'Time');  // First column as datetime
-    data.addColumn('number', 'Wind Speed (m/s)');  // Second column as number (wind speed)
+    var dataWind = new google.visualization.DataTable();
+    dataWind.addColumn('datetime', 'Time');  // First column as datetime
+    dataWind.addColumn('number', 'Wind Speed (m/s)');  // Second column as number (wind speed)
+    
+    var dataTemp = new google.visualization.DataTable();
+    dataTemp.addColumn('datetime', 'Time');  // First column as datetime
+    dataTemp.addColumn('number', 'Water Temp C');  // Second column as number (wind speed)
 
     
     locations.forEach(function(location) {
         // Adding each row (timestamp and wind speed)
-        data.addRow([new Date(location.timestamp), location.wind_speed]);
+        dataWind.addRow([new Date(location.timestamp), location.wind_speed]);
+    });
+    locations.forEach(function(location) {
+        // Adding each row (timestamp and wind speed)
+        dataTemp.addRow([new Date(location.timestamp), location.water_temp]);
     });
 
     // Define the chart options
-    var options = {
+    var optionsWind = {
         title: 'Wind Speed Over Time',
         curveType: 'function',
         legend: { position: 'bottom' },
@@ -209,10 +211,24 @@ function drawChart() {
             title: 'Wind Speed (m/s)'  // Label for the y-axis
         }
     };
+    var optionsTemp = {
+        title: 'Water Temp Over Time',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        hAxis: {
+            title: 'Time',
+            format: 'MMM d, h:mm a'  // Format for the x-axis (time)
+        },
+        vAxis: {
+            title: 'Water Temp C'  // Label for the y-axis
+        }
+    };
 
     // Create the chart and pass the data and options
     var chart = new google.visualization.LineChart(document.getElementById('windSpeedChart'));
-    chart.draw(data, options);
+    chart.draw(dataWind, optionsWind);
+    var chart = new google.visualization.LineChart(document.getElementById('waterTempChart'));
+    chart.draw(dataTemp, optionsTemp);
 }
 
 
