@@ -71,24 +71,7 @@
     <h2>Live location</h2>
     <div id="map"></div>
      <h2>Location Data</h2>
-    <table>
-        <tr>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Wind Speed (m/s)</th>
-            <th>Water Temperature (°C)</th>
-            <th>Timestamp</th>
-        </tr>
-        {% for data in tracker_data %}
-        <tr>
-            <td>{{ data.lat }}</td>
-            <td>{{ data.lon }}</td>
-            <td>{{ data.wind_speed }}</td>
-            <td>{{ data.water_temp }}</td>
-            <td>{{ data.timestamp }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+  
     <script>
     // Create the map and set initial view
 var map = L.map('map').setView([0, 0], 2);
