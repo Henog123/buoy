@@ -83,27 +83,7 @@
 
     <div id="windSpeedChart" style="width: 100%; height: 400px;"></div>
     <div id="waterTempChart" style="width: 100%; height: 400px;"></div>
-        <h2>Location Data</h2>
-    <table>
-        <tr>
-            <th>Tracker</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Wind Speed (m/s)</th>
-            <th>Water Temperature (°C)</th>
-            <th>Timestamp</th>
-        </tr>
-        {% for data in tracker_data %}
-        <tr>
-            <td>{{ data.tracker_id }}</td>
-            <td>{{ data.lat }}</td>
-            <td>{{ data.lon }}</td>
-            <td>{{ data.wind_speed }}</td>
-            <td>{{ data.water_temp }}</td>
-            <td>{{ data.timestamp }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+       
 
     <!-- Add Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
