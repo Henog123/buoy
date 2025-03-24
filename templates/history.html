@@ -111,7 +111,7 @@
 
         var processedLocations = locations;
         if (timeDifference > 12) {
-            console.log('Data spans more than 24 hours, switching to 5-minute intervals...');
+            console.log('Data spans more than 12 hours, switching to 5-minute intervals...');
             processedLocations = aggregateDataToFiveMinutes(locations);
         }
 
@@ -152,10 +152,44 @@
             dataTemp.addColumn('datetime', 'Time');
             dataTemp.addColumn('number', 'Water Temp (°C)');
 
-            processedLocations.forEach(function(location) {
-                dataWind.addRow([new Date(location.timestamp), location.wind_speed]);
-                dataTemp.addRow([new Date(location.timestamp), location.water_temp]);
-            });
+            // Function to filter data based on the interval
+function filterDataByInterval(data, intervalMs) {
+    var filteredData = [];
+    var lastTimestamp = 0;
+
+    data.forEach(function(location) {
+        var currentTimestamp = new Date(location.timestamp).getTime();
+
+        // Add first data point or add if interval has passed
+        if (filteredData.length === 0 || currentTimestamp - lastTimestamp >= intervalMs) {
+            filteredData.push(location);
+            lastTimestamp = currentTimestamp;
+        }
+    });
+
+    return filteredData;
+}
+
+// Determine interval based on time range
+var now = new Date();
+var oldestTimestamp = new Date(locations[0]?.timestamp || now);
+var timeDiffHours = (now - oldestTimestamp) / (1000 * 60 * 60);  // Time difference in hours
+
+var intervalMs = (timeDiffHours > 12) ? 5 * 60 * 1000 : 5 * 1000;  // 5 min or 5 sec
+
+// Filter data based on interval
+var filteredLocations = filterDataByInterval(locations, intervalMs);
+
+// Add filtered wind speed data
+filteredLocations.forEach(function(location) {
+    dataWind.addRow([new Date(location.timestamp), location.wind_speed]);
+});
+
+// Add filtered water temp data
+filteredLocations.forEach(function(location) {
+    dataTemp.addRow([new Date(location.timestamp), location.water_temp]);
+});
+
 
             var optionsWind = {
                 title: 'Wind Speed Over Time',
