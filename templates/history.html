@@ -1,73 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GPS Location History</title>
+    <title>Science Probe</title>
     <style>
-        
-        h1 {
-            color: white;
-        }
-        h2 {
-            text-align: center;
-        }
-        #map {
-            height: 400px;
-            width: 80%;
-            margin: 0 auto;
-        }
-        table {
-            width: 80%;
-            border-collapse: collapse;
-            margin: 0 auto;
-            margin-bottom: 40px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        #header {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-        }
-        #nav {
-            margin-top: 10px;
-        }
-        #nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: white;
-        }
-        #nav a:hover {
-            text-decoration: underline;
-        }
-        .container {
-            margin: 20px;
-        }
-        
+        h1 { color: white; }
+        h2 { text-align: center; }
+        #map { height: 400px; width: 80%; margin: 0 auto; }
+        table { width: 80%; border-collapse: collapse; margin: 0 auto; margin-bottom: 40px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        th { background-color: #f4f4f4; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        #header { background-color: #333; color: white; padding: 10px 20px; text-align: center; }
+        #nav { margin-top: 10px; }
+        #nav a { margin: 0 10px; text-decoration: none; color: white; }
+        #nav a:hover { text-decoration: underline; }
+        .container { margin: 20px; }
     </style>
+
     <!-- Add Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
 </head>
 <body>
 
     <div id="header">
-        <h1>GPS Tracker Dashboard</h1>
+        <h1>Science Probe Dashboard</h1>
         <div id="nav">
             <a href="/">Home</a>
             <a href="/history/1">View History</a>
@@ -75,149 +33,185 @@
         </div>
     </div>
 
-    
     <h2>Tracker History - ID: {{ tracker_data[0].tracker_id }}</h2>
 
-    <!-- Map Container -->
     <div id="map"></div>
-
     <div id="windSpeedChart" style="width: 100%; height: 400px;"></div>
-    
-        <h2>Location Data</h2>
-    <table>
-        <tr>
-            <th>Tracker</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Wind Speed (m/s)</th>
-            <th>Water Temperature (°C)</th>
-            <th>Timestamp</th>
-        </tr>
-        {% for data in tracker_data %}
-        <tr>
-            <td>{{ data.tracker_id }}</td>
-            <td>{{ data.lat }}</td>
-            <td>{{ data.lon }}</td>
-            <td>{{ data.wind_speed }}</td>
-            <td>{{ data.water_temp }}</td>
-            <td>{{ data.timestamp }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div id="waterTempChart" style="width: 100%; height: 400px;"></div>
 
     <!-- Add Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-// Initialize the map
-var map = L.map('map').setView([0, 0], 2);  // Default to world view
+        // Initialize the map
+        var map = L.map('map').setView([0, 0], 2);
 
-// Add OpenStreetMap tiles
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-}).addTo(map);
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
 
-// Add markers for each location
-var locations = [
-    {% for data in tracker_data %}
-        {
-            tracker_id: "{{ data.tracker_id }}",
-            lat: {{ data.lat }},
-            lon: {{ data.lon }},
-            wind_speed: {{ data.wind_speed }},
-            water_temp: {{ data.water_temp }},
-            timestamp: "{{ data.timestamp }}"
+        // Convert data from Flask to JavaScript array
+        var locations = [
+            {% for data in tracker_data %}
+                {
+                    tracker_id: "{{ data.tracker_id }}",
+                    lat: {{ data.lat }},
+                    lon: {{ data.lon }},
+                    wind_speed: {{ data.wind_speed }},
+                    water_temp: {{ data.water_temp }},
+                    timestamp: "{{ data.timestamp }}"
+                }
+                {% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        // Function to aggregate data into 5-minute intervals
+        function aggregateDataToFiveMinutes(data) {
+            var aggregatedData = {};
+
+            data.forEach(function(entry) {
+                var timestamp = new Date(entry.timestamp);
+                timestamp.setSeconds(0);
+                timestamp.setMilliseconds(0);
+                timestamp.setMinutes(Math.floor(timestamp.getMinutes() / 5) * 5);
+
+                var key = timestamp.toISOString();
+
+                if (!aggregatedData[key]) {
+                    aggregatedData[key] = {
+                        lat_sum: entry.lat,
+                        lon_sum: entry.lon,
+                        wind_speed_sum: entry.wind_speed,
+                        water_temp_sum: entry.water_temp,
+                        count: 1,
+                        timestamp: timestamp
+                    };
+                } else {
+                    aggregatedData[key].lat_sum += entry.lat;
+                    aggregatedData[key].lon_sum += entry.lon;
+                    aggregatedData[key].wind_speed_sum += entry.wind_speed;
+                    aggregatedData[key].water_temp_sum += entry.water_temp;
+                    aggregatedData[key].count += 1;
+                }
+            });
+
+            return Object.values(aggregatedData).map(function(item) {
+                return {
+                    lat: item.lat_sum / item.count,
+                    lon: item.lon_sum / item.count,
+                    wind_speed: item.wind_speed_sum / item.count,
+                    water_temp: item.water_temp_sum / item.count,
+                    timestamp: item.timestamp.toISOString()
+                };
+            });
         }
-        {% if not loop.last %},{% endif %}
-    {% endfor %}
-];
 
-locations.forEach(function (location) {
-    var popupContent = `
-        <strong>Tracker:</strong> ${location.tracker_id}<br>
-        <strong>Coordinates:</strong> ${location.lat}, ${location.lon}<br>
-        <strong>Wind Speed:</strong> ${location.wind_speed} m/s<br>
-        <strong>Water Temp:</strong> ${location.water_temp} °C<br>
-        <strong>Timestamp:</strong> ${location.timestamp}
-    `;
-    L.marker([location.lat, location.lon])
-        .addTo(map)
-        .bindPopup(popupContent);
+        // Check if data spans more than 24 hours
+        var firstTimestamp = new Date(locations[0].timestamp);
+        var lastTimestamp = new Date(locations[locations.length - 1].timestamp);
+        var timeDifference = (lastTimestamp - firstTimestamp) / (1000 * 60 * 60); // Hours
+
+        var processedLocations = locations;
+        if (timeDifference > 12) {
+            console.log('Data spans more than 12 hours, switching to 5-minute intervals...');
+            processedLocations = aggregateDataToFiveMinutes(locations);
+        }
+
+        // Add markers for each location
+        processedLocations.forEach(function(location) {
+            var popupContent = `
+                <strong>Tracker:</strong> ${location.tracker_id || "N/A"}<br>
+                <strong>Coordinates:</strong> ${location.lat}, ${location.lon}<br>
+                <strong>Wind Speed:</strong> ${location.wind_speed.toFixed(2)} m/s<br>
+                <strong>Water Temp:</strong> ${location.water_temp.toFixed(2)} °C<br>
+                <strong>Timestamp:</strong> ${location.timestamp}
+            `;
+            L.marker([location.lat, location.lon])
+                .addTo(map)
+                .bindPopup(popupContent);
+        });
+
+        // Create a polyline of GPS path
+        var latlngs = processedLocations.map(function(location) {
+            return [location.lat, location.lon];
+        });
+
+        if (latlngs.length > 1) {
+            var polyline = L.polyline(latlngs, { color: 'blue', weight: 3, opacity: 0.8 }).addTo(map);
+            map.fitBounds(polyline.getBounds());
+        }
+
+        // Load Google Charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var dataWind = new google.visualization.DataTable();
+            dataWind.addColumn('datetime', 'Time');
+            dataWind.addColumn('number', 'Wind Speed (m/s)');
+            
+            var dataTemp = new google.visualization.DataTable();
+            dataTemp.addColumn('datetime', 'Time');
+            dataTemp.addColumn('number', 'Water Temp (°C)');
+
+            // Function to filter data based on the interval
+function filterDataByInterval(data, intervalMs) {
+    var filteredData = [];
+    var lastTimestamp = 0;
+
+    data.forEach(function(location) {
+        var currentTimestamp = new Date(location.timestamp).getTime();
+
+        // Add first data point or add if interval has passed
+        if (filteredData.length === 0 || currentTimestamp - lastTimestamp >= intervalMs) {
+            filteredData.push(location);
+            lastTimestamp = currentTimestamp;
+        }
+    });
+
+    return filteredData;
+}
+
+// Determine interval based on time range
+var now = new Date();
+var oldestTimestamp = new Date(locations[0]?.timestamp || now);
+var timeDiffHours = (now - oldestTimestamp) / (1000 * 60 * 60);  // Time difference in hours
+
+var intervalMs = (timeDiffHours > 12) ? 5 * 60 * 1000 : 5 * 1000;  // 5 min or 5 sec
+
+// Filter data based on interval
+var filteredLocations = filterDataByInterval(locations, intervalMs);
+
+// Add filtered wind speed data
+filteredLocations.forEach(function(location) {
+    dataWind.addRow([new Date(location.timestamp), location.wind_speed]);
 });
 
-// Create an array of LatLng points from locations
-var latlngs = locations.map(function (location) {
-    return [location.lat, location.lon];
+// Add filtered water temp data
+filteredLocations.forEach(function(location) {
+    dataTemp.addRow([new Date(location.timestamp), location.water_temp]);
 });
 
-// Draw a polyline connecting the points
-if (latlngs.length > 1) {
-    var polyline = L.polyline(latlngs, {
-        color: 'blue',     // Line color
-        weight: 3,         // Line thickness
-        opacity: 0.8,      // Line opacity
-    }).addTo(map);
 
-    // Fit the map to show the polyline
-    map.fitBounds(polyline.getBounds());
-}
+            var optionsWind = {
+                title: 'Wind Speed Over Time',
+                legend: { position: 'bottom' },
+                hAxis: { title: 'Time', format: 'MMM d, h:mm a' },
+                vAxis: { title: 'Wind Speed (m/s)' }
+            };
+            var optionsTemp = {
+                title: 'Water Temp Over Time',
+                legend: { position: 'bottom' },
+                hAxis: { title: 'Time', format: 'MMM d, h:mm a' },
+                vAxis: { title: 'Water Temp (°C)' }
+            };
 
+            var chartWind = new google.visualization.LineChart(document.getElementById('windSpeedChart'));
+            chartWind.draw(dataWind, optionsWind);
 
-        
-// Center the map to the last location if available
-if (locations.length > 0) {
-    var bounds = locations.map(function (location) {
-        return [location.lat, location.lon];
-    });
-    map.fitBounds(bounds);
-}
-
-// Load Google Charts
-google.charts.load('current', {'packages':['corechart']});
-
-// When the charts library is loaded, call the drawChart function
-google.charts.setOnLoadCallback(drawChart);
-
-function drawChart() {
-    // Assuming trackerData is an array of objects returned from your API (in Python or from an endpoint)
-    var trackerData = [
-        { timestamp: '2025-03-18T12:00:00', wind_speed: 5.2 },
-        { timestamp: '2025-03-18T13:00:00', wind_speed: 6.8 },
-        { timestamp: '2025-03-18T14:00:00', wind_speed: 7.1 }
-    ];
-
-    // Create a DataTable object for Google Charts
-    var data = new google.visualization.DataTable();
-    data.addColumn('datetime', 'Time');  // First column as datetime
-    data.addColumn('number', 'Wind Speed (m/s)');  // Second column as number (wind speed)
-
-    
-    locations.forEach(function(location) {
-        // Adding each row (timestamp and wind speed)
-        data.addRow([new Date(location.timestamp), location.wind_speed]);
-    });
-
-    // Define the chart options
-    var options = {
-        title: 'Wind Speed Over Time',
-        curveType: 'function',
-        legend: { position: 'bottom' },
-        hAxis: {
-            title: 'Time',
-            format: 'MMM d, h:mm a'  // Format for the x-axis (time)
-        },
-        vAxis: {
-            title: 'Wind Speed (m/s)'  // Label for the y-axis
+            var chartTemp = new google.visualization.LineChart(document.getElementById('waterTempChart'));
+            chartTemp.draw(dataTemp, optionsTemp);
         }
-    };
 
-    // Create the chart and pass the data and options
-    var chart = new google.visualization.LineChart(document.getElementById('windSpeedChart'));
-    chart.draw(data, options);
-}
-
-
-        
-console.log(locations);
-
+        console.log(locations);
     </script>
+</body>
 </html>
