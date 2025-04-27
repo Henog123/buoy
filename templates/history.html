@@ -61,6 +61,7 @@
     </style>
     <!-- Add Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
 
@@ -78,7 +79,8 @@
 
     <!-- Map Container -->
     <div id="map"></div>
-    
+    <div id="windSpeedChart" style="width: 100%; height: 400px;"></div>
+
         <h2>Location Data</h2>
     <table>
         <tr>
@@ -166,6 +168,46 @@ if (locations.length > 0) {
     });
     map.fitBounds(bounds);
 }
+
+
+
+
+
+// Load Google Charts
+google.charts.load('current', {'packages':['corechart']});
+
+// Draw chart when loaded
+google.charts.setOnLoadCallback(drawChart);
+
+
+function drawChart() {
+    var trackerData = JSON.parse('{{ bouy_data | tojson }}'); // Parse the JSON string into a JavaScript object
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('datetime', 'Time');
+            data.addColumn('number', 'Wind Speed (m/s)');
+
+            trackerData.forEach(function(point) {
+                data.addRow([new Date(point.timestamp), point.wind_speed]);
+            });
+
+    var options = {
+        title: 'Wind Speed Over Time',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        hAxis: {
+            title: 'Time',
+            format: 'MMM d, h:mm a'
+        },
+        vAxis: {
+            title: 'Wind Speed (m/s)'
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('windSpeedChart'));
+    chart.draw(data, options);
+}
+        
         
 console.log(locations);
 

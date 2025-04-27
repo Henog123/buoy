@@ -17,14 +17,27 @@ db = SQLAlchemy(app)
 
 
 # Define the GPSData model
-class GPSData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    tracker_id = db.Column(db.String, nullable=False)
-    lat = db.Column(db.Float, nullable=False)
-    lon = db.Column(db.Float, nullable=False)
-    wind_speed = db.Column(db.Float, nullable=True)
-    water_temp = db.Column(db.Float, nullable=True)
-    timestamp = db.Column(db.DateTime, server_default=db.func.now())
+class GPSData:
+    def __init__(self, timestamp, wind_speed, lat, lon, water_temp, tracker_id):
+        self.timestamp = timestamp
+        self.wind_speed = wind_speed
+        self.lat = lat
+        self.lon = lon
+        self.water_temp = water_temp
+        self.tracker_id = tracker_id
+
+    # The to_dict() method should be indented properly within the class
+    def to_dict(self):
+        return {
+            'timestamp': self.timestamp,
+            'wind_speed': self.wind_speed,
+            'lat': self.lat,
+            'lon': self.lon,
+            'water_temp': self.water_temp,
+            'tracker_id': self.tracker_id
+        }
+
+
 
 # Create the database tables
 with app.app_context():
@@ -139,11 +152,12 @@ def live_data():
 @app.route("/history/<int:tracker_id>")
 def history(tracker_id):
     tracker_data = GPSData.query.filter_by(tracker_id=str(tracker_id)).order_by(GPSData.timestamp.desc()).all()
-
+    tracker_data_dicts = [data.to_dict() for data in tracker_data]
+    
     if not tracker_data:
         return "No data found for this tracker.", 404
 
-    return render_template("history.html", tracker_data=tracker_data)
+    return render_template("history.html", tracker_data=tracker_data, bouy_data=json.dumps(tracker_data_dicts))
 
 
 # Run Flask app with dynamic port
