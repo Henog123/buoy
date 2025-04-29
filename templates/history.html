@@ -61,6 +61,14 @@
     </style>
     <!-- Add Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+    <!-- Chart.js CDN -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@1.0.0"></script>
+   
+
+
 </head>
 <body>
 
@@ -78,6 +86,9 @@
 
     <!-- Map Container -->
     <div id="map"></div>
+
+    <canvas id="windSpeedChart" width="400" height="200"></canvas>
+
     
         <h2>Location Data</h2>
     <table>
@@ -166,6 +177,73 @@ if (locations.length > 0) {
     });
     map.fitBounds(bounds);
 }
+
+
+
+
+
+
+        
+
+
+
+// Get canvas context
+var ctx = document.getElementById('windSpeedChart').getContext('2d');
+
+// Sample data for testing (replace with your real data)
+var dataPoints = [
+    { timestamp: '2025-03-18T12:00:00', wind_speed: 5.2 },
+    { timestamp: '2025-03-18T13:00:00', wind_speed: 6.8 },
+    { timestamp: '2025-03-18T14:00:00', wind_speed: 7.1 }
+];
+
+
+// Format data for the chart
+var labels = dataPoints.map(data => new Date(data.timestamp));
+var windSpeedData = dataPoints.map(data => data.wind_speed);
+
+
+// Create the chart
+var trackerChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Wind Speed (m/s)',
+                data: windSpeedData,
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                fill: true
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'hour',
+                    displayFormats: {
+                        hour: 'MMM d, h a'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Timestamp'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Wind Speed (m/s)'
+                }
+            }
+        }
+    }
+});
         
 console.log(locations);
 
